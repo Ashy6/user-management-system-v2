@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useUsers, useRoles } from '../hooks';
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Loading } from '../components/ui';
-import { Search, Plus, Edit, Trash2, Eye, UserCheck, UserX, UserMinus } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, UserCheck, UserX, UserMinus } from 'lucide-react';
 import type { User, UserQuery, Role } from '../types';
 import { formatDate, debounce } from '../lib/utils';
 import { toast } from 'sonner';
@@ -25,8 +25,8 @@ const Users: React.FC = () => {
     roleId: '',
   });
   const [roles, setRoles] = useState<Role[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [showUserModal, setShowUserModal] = useState(false);
+  const [, setSelectedUser] = useState<User | null>(null);
+  const [, setShowUserModal] = useState(false);
 
   // 加载数据
   useEffect(() => {

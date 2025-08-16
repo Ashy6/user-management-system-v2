@@ -79,6 +79,15 @@ export class AuthController {
     return this.authService.logout(refreshToken);
   }
 
+  @Public()
+  @Get('config-status')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: '获取邮件服务配置状态' })
+  @ApiResponse({ status: 200, description: '配置状态获取成功' })
+  async getConfigStatus() {
+    return this.authService.getConfigStatus();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   @ApiBearerAuth()

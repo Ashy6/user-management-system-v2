@@ -1,0 +1,42 @@
+name = "user-management-backend"
+main = "dist/main.js"
+compatibility_date = "2024-01-01"
+# Node.js兼容性标志
+compatibility_flags = ["nodejs_compat"]
+
+[env.production]
+name = "user-management-backend"
+
+[env.preview]
+name = "user-management-backend-preview"
+
+# Environment variables (set these in Cloudflare dashboard)
+[vars]
+NODE_ENV = "production"
+PORT = "8787"
+CORS_ORIGIN = "https://your-frontend-domain.pages.dev"
+
+# Database configuration (use Cloudflare D1 or external database)
+# DATABASE_URL will be set as a secret
+# REDIS_URL will be set as a secret if using external Redis
+
+# Secrets (set via wrangler secret put)
+# DATABASE_URL
+# REDIS_URL
+# JWT_SECRET
+# EMAIL_HOST
+# EMAIL_PORT
+# EMAIL_USER
+# EMAIL_PASS
+# SMTP_FROM
+
+# Bindings for Cloudflare services
+[[d1_databases]]
+binding = "DB"
+database_name = "user-management-db"
+database_id = "your-d1-database-id"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "your-kv-namespace-id"
+preview_id = "your-kv-preview-namespace-id"

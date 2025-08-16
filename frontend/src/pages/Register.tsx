@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { UserPlus } from 'lucide-react';
-import { useAuth } from '../hooks';
-import { Button, Input, Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { isValidEmail, isValidPhone } from '../lib/utils';
-import type { RegisterRequest } from '../types';
+import { useAuth } from '../hooks';
+
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ const Register: React.FC = () => {
     phone: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [codeSent, setCodeSent] = useState(false);
+  const [, setCodeSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [sendingCode, setSendingCode] = useState(false);
 

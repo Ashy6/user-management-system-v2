@@ -24,5 +24,8 @@
     "npm": ">=8.0.0"
   },
   "author": "User Management System Team",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "nodemailer": "^7.0.5"
+  }
 }

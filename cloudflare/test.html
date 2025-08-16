@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮件发送测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 邮件发送测试</h1>
+        <p>测试Cloudflare Workers邮件发送功能</p>
+        
+        <form id="emailForm">
+            <div class="form-group">
+                <label for="email">邮箱地址:</label>
+                <input type="email" id="email" name="email" required placeholder="请输入您的邮箱地址">
+            </div>
+            <button type="submit" id="sendBtn">发送验证码</button>
+        </form>
+        
+        <div id="result" class="result"></div>
+        
+        <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+            <h3>测试说明:</h3>
+            <ul>
+                <li>当前使用模拟邮件发送模式</li>
+                <li>验证码会在控制台日志中显示</li>
+                <li>如需真实邮件发送，请配置Resend API Key</li>
+                <li>Worker URL: <code>https://email-backend-worker.zengjx1998.workers.dev</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('emailForm');
+        const result = document.getElementById('result');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            if (!email) {
+                showResult('请输入邮箱地址', 'error');
+                return;
+            }
+            
+            // 显示加载状态
+            sendBtn.disabled = true;
+            sendBtn.textContent = '发送中...';
+            showResult('正在发送验证码，请稍候...', 'info');
+            
+            try {
+                const response = await fetch('https://email-backend-worker.zengjx1998.workers.dev/api/auth/send-code', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ 验证码发送成功！<br>邮件ID: ${data.messageId || 'N/A'}<br>服务: ${data.service || 'unknown'}`, 'success');
+                } else {
+                    showResult(`❌ 发送失败: ${data.message || '未知错误'}`, 'error');
+                }
+            } catch (error) {
+                console.error('请求错误:', error);
+                showResult(`❌ 网络错误: ${error.message}`, 'error');
+            } finally {
+                // 恢复按钮状态
+                sendBtn.disabled = false;
+                sendBtn.textContent = '发送验证码';
+            }
+        });
+        
+        function showResult(message, type) {
+            result.innerHTML = message;
+            result.className = `result ${type}`;
+            result.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

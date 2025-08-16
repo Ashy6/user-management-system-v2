@@ -7,6 +7,7 @@
 - [快速开始](#快速开始)
 - [本地开发部署](#本地开发部署)
 - [Docker部署](#docker部署)
+- [Cloudflare部署](#cloudflare部署)
 - [生产环境部署](#生产环境部署)
 - [环境变量配置](#环境变量配置)
 - [数据库配置](#数据库配置)
@@ -110,6 +111,170 @@ docker build -t user-management-frontend ./frontend
 docker run -d -p 3000:3000 --name backend user-management-backend
 docker run -d -p 80:80 --name frontend user-management-frontend
 ```
+
+## Cloudflare部署
+
+本项目支持部署到Cloudflare平台，前端使用Cloudflare Pages，后端使用Cloudflare Workers。
+
+### 前置要求
+
+- Cloudflare账户
+- Wrangler CLI工具
+- GitHub仓库（用于自动部署）
+
+### 安装Wrangler CLI
+
+```bash
+npm install -g wrangler
+
+# 登录Cloudflare
+wrangler login
+```
+
+### 前端部署（Cloudflare Pages）
+
+1. **自动部署（推荐）**
+   - 在Cloudflare Dashboard中创建新的Pages项目
+   - 连接GitHub仓库
+   - 设置构建配置：
+     - 构建命令: `cd frontend && npm install && npm run build`
+     - 构建输出目录: `frontend/dist`
+     - Root目录: `/`
+
+2. **手动部署**
+   ```bash
+   # 构建前端
+   cd frontend
+   npm install
+   npm run build
+   
+   # 部署到Cloudflare Pages
+   wrangler pages deploy dist --project-name=your-frontend-project
+   ```
+
+3. **环境变量配置**
+   在Cloudflare Pages设置中添加环境变量：
+   ```
+   VITE_API_URL=https://your-backend-worker.your-subdomain.workers.dev
+   ```
+
+### 后端部署（Cloudflare Workers）
+
+1. **部署Workers**
+   ```bash
+   cd backend
+   npm install
+   npm run build
+   
+   # 部署到Cloudflare Workers
+   wrangler deploy
+   ```
+
+2. **配置环境变量**
+   ```bash
+   # 设置环境变量
+   wrangler secret put JWT_SECRET
+   wrangler secret put EMAIL_PASS
+   wrangler secret put DB_PASSWORD
+   
+   # 设置普通变量
+   wrangler env put NODE_ENV production
+   wrangler env put PORT 8787
+   ```
+
+3. **数据库配置**
+   - 使用Cloudflare D1数据库或外部数据库服务
+   - 配置数据库连接字符串
+   - 运行数据库迁移
+
+### 使用部署脚本
+
+项目提供了自动化部署脚本：
+
+```bash
+# 运行Cloudflare部署脚本
+./deploy-cloudflare.sh
+```
+
+脚本会自动：
+- 检查Wrangler CLI安装
+- 验证Cloudflare登录状态
+- 构建前后端项目
+- 部署到Cloudflare平台
+- 提供部署后配置指南
+
+### 域名配置
+
+1. **前端域名**
+   - 在Cloudflare Pages中配置自定义域名
+   - 设置DNS记录
+   - 启用HTTPS
+
+2. **后端域名**
+   - Workers默认提供 `*.workers.dev` 域名
+   - 可配置自定义域名和路由
+
+### Cloudflare特性配置
+
+1. **缓存策略**
+   ```javascript
+   // 在Workers中配置缓存
+   const cache = caches.default;
+   const cacheKey = new Request(url, request);
+   const response = await cache.match(cacheKey);
+   ```
+
+2. **安全设置**
+   - 启用Web Application Firewall (WAF)
+   - 配置DDoS防护
+   - 设置访问规则
+
+3. **性能优化**
+   - 启用Cloudflare CDN
+   - 配置图片优化
+   - 使用Workers KV存储
+
+### 监控和日志
+
+1. **Workers日志**
+   ```bash
+   # 查看实时日志
+   wrangler tail
+   
+   # 查看特定Worker日志
+   wrangler tail --name your-worker-name
+   ```
+
+2. **Pages部署日志**
+   - 在Cloudflare Dashboard中查看构建日志
+   - 监控部署状态和错误
+
+3. **Analytics**
+   - 使用Cloudflare Analytics查看流量统计
+   - 监控性能指标
+   - 设置告警规则
+
+### 故障排除
+
+1. **部署失败**
+   - 检查wrangler.toml配置
+   - 验证环境变量设置
+   - 查看构建日志
+
+2. **CORS问题**
+   - 确认Workers中CORS配置正确
+   - 检查域名白名单设置
+
+3. **数据库连接**
+   - 验证数据库连接字符串
+   - 检查网络访问权限
+   - 确认SSL证书配置
+
+### 成本优化
+
+- Cloudflare Pages: 免费层支持无限静态网站
+- Cloudflare Workers: 免费层每天100,000次请求
+- 根据使用量选择合适的付费计划
 
 ## 生产环境部署
 

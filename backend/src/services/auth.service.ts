@@ -364,4 +364,20 @@ export class AuthService {
 
     await this.loginLogRepository.save(loginLog);
   }
+
+  async getConfigStatus(): Promise<{
+    hasApiKey: boolean;
+    fromEmail: string;
+    environment: string;
+  }> {
+    const sendGridApiKey = this.configService.get<string>('SENDGRID_API_KEY');
+    const fromEmail = this.configService.get<string>('SENDGRID_FROM_EMAIL');
+    const environment = this.configService.get<string>('NODE_ENV', 'development');
+
+    return {
+      hasApiKey: !!(sendGridApiKey && sendGridApiKey !== '' && !sendGridApiKey.includes('your-')),
+      fromEmail: fromEmail || 'Not configured',
+      environment,
+    };
+  }
 }

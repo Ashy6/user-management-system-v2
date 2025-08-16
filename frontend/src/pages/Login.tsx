@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import { useAuth } from '../hooks';
-import { Button, Input, Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components';
-import { Mail, Lock } from 'lucide-react';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
+import { Mail } from 'lucide-react';
 import { isValidEmail } from '../lib/utils';
-import type { LoginRequest } from '../types';
+import { useAuth } from '../hooks';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Login: React.FC = () => {
     code: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [codeSent, setCodeSent] = useState(false);
+  const [, setCodeSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [sendingCode, setSendingCode] = useState(false);
 

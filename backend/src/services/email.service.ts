@@ -1,70 +1,68 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
-import { getEmailConfig, EmailConfig } from '../config';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: nodemailer.Transporter;
-  private emailConfig: EmailConfig;
+  private sendGridApiKey: string;
+  private fromEmail: string;
   private isDevelopment: boolean;
 
   constructor(private configService: ConfigService) {
-    this.emailConfig = getEmailConfig(this.configService);
+    this.sendGridApiKey = this.configService.get('SENDGRID_API_KEY', '');
+    this.fromEmail = this.configService.get('SENDGRID_FROM_EMAIL', 'noreply@example.com');
     this.isDevelopment = this.configService.get('NODE_ENV') === 'development';
     this.logger.log(
-      `Email config loaded: ${JSON.stringify({
-        host: this.emailConfig.host,
-        port: this.emailConfig.port,
-        user: this.emailConfig.auth.user,
-        from: this.emailConfig.from,
+      `SendGrid config loaded: ${JSON.stringify({
+        hasApiKey: !!this.sendGridApiKey,
+        fromEmail: this.fromEmail,
+        isDevelopment: this.isDevelopment,
       })}`,
     );
-    this.initializeTransporter();
   }
 
-  private initializeTransporter() {
-    // 检查是否为邮件配置为占位符
-    const isPlaceholderConfig =
-      this.emailConfig.auth.user === 'your-email@example.com' ||
-      this.emailConfig.auth.user === '' ||
-      this.emailConfig.auth.pass === 'your-app-password' ||
-      this.emailConfig.auth.pass === '';
-
-    this.logger.log(
-      `isDevelopment: ${this.isDevelopment}, isPlaceholderConfig: ${isPlaceholderConfig}`,
-    );
-
-    if (isPlaceholderConfig) {
-      // 开发环境使用测试账户
-      // this.transporter = nodemailer.createTransport({
-      //   host: 'smtp.ethereal.email',
-      //   port: 587,
-      //   secure: false,
-      //   auth: {
-      //     user: 'test.user@ethereal.email',
-      //     pass: 'ethereal.pass',
-      //   },
-      // });
-      this.transporter = nodemailer.createTransport({
-        host: this.emailConfig.host,
-        port: this.emailConfig.port,
-        secure: this.emailConfig.secure,
-        auth: this.emailConfig.auth,
+  private async sendEmailWithSendGrid(
+    to: string,
+    subject: string,
+    html: string,
+  ): Promise<boolean> {
+    try {
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.sendGridApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personalizations: [
+            {
+              to: [{ email: to }],
+              subject: subject,
+            },
+          ],
+          from: { email: this.fromEmail },
+          content: [
+            {
+              type: 'text/html',
+              value: html,
+            },
+          ],
+        }),
       });
-      this.logger.log('Using development email configuration (Ethereal Email)');
-    } else {
-      // 生产环境使用真实配置
-      this.transporter = nodemailer.createTransport({
-        host: this.emailConfig.host,
-        port: this.emailConfig.port,
-        secure: this.emailConfig.secure,
-        auth: this.emailConfig.auth,
-      });
+
+      if (response.ok) {
+        this.logger.log(`Email sent successfully to ${to}`);
+        return true;
+      } else {
+        const errorText = await response.text();
+        this.logger.error(`SendGrid API error: ${response.status} - ${errorText}`);
+        return false;
+      }
+    } catch (error) {
+      this.logger.error(`Failed to send email via SendGrid:`, error);
+      return false;
     }
-    console.log(666, this.emailConfig);
   }
 
   async sendVerificationCode(
@@ -76,55 +74,34 @@ export class EmailService {
       const subject = this.getSubjectByType(type);
       const html = this.getEmailTemplate(code, type);
 
-      // 检查是否为占位符配置
-      const isPlaceholderConfig =
-        this.emailConfig.auth.user === 'your-email@example.com' ||
-        this.emailConfig.auth.user === '' ||
-        this.emailConfig.auth.pass === 'your-app-password' ||
-        this.emailConfig.auth.pass === '';
-
-      if (isPlaceholderConfig) {
-        // 开发环境模拟发送邮件
-        this.logger.log(`[DEV MODE] Simulating email send to ${email}`);
+      // 检查是否配置了SendGrid API Key
+      if (!this.sendGridApiKey || this.sendGridApiKey === '') {
+        this.logger.warn(`[DEV MODE] No SendGrid API key configured, simulating email send to ${email}`);
         this.logger.log(`[DEV MODE] Subject: ${subject}`);
         this.logger.log(`[DEV MODE] Verification Code: ${code}`);
         this.logger.log(`[DEV MODE] Type: ${type}`);
-        this.logger.log(
-          `[DEV MODE] isPlaceholderConfig: ${isPlaceholderConfig}`,
-        );
-
+        
         // 模拟网络延迟
         await new Promise((resolve) => setTimeout(resolve, 100));
-
+        
         this.logger.log(`[DEV MODE] Email simulation completed for ${email}`);
         return true;
-      } else {
-        // 生产环境真实发送
-        this.logger.log(
-          `[PROD MODE] Attempting to send real email to ${email}`,
-        );
-        this.logger.log(
-          `[PROD MODE] Using SMTP config: ${this.emailConfig.host}:${this.emailConfig.port}`,
-        );
-
-        const mailOptions = {
-          from: this.emailConfig.from,
-          to: email,
-          subject,
-          html,
-        };
-
-        this.logger.log(
-          `[PROD MODE] Mail options: ${JSON.stringify(mailOptions)}`,
-        );
-
-        const result = await this.transporter.sendMail(mailOptions);
-        this.logger.log(
-          `[PROD MODE] Email sent successfully: ${JSON.stringify(result)}`,
-        );
-        this.logger.log(`Verification code sent to ${email}`);
-        return true;
       }
+
+      // 使用SendGrid发送邮件
+      this.logger.log(`[SendGrid] Attempting to send email to ${email}`);
+      this.logger.log(`[SendGrid] Subject: ${subject}`);
+      this.logger.log(`[SendGrid] From: ${this.fromEmail}`);
+      
+      const result = await this.sendEmailWithSendGrid(email, subject, html);
+      
+      if (result) {
+        this.logger.log(`[SendGrid] Verification code sent successfully to ${email}`);
+      } else {
+        this.logger.error(`[SendGrid] Failed to send verification code to ${email}`);
+      }
+      
+      return result;
     } catch (error) {
       this.logger.error(`Failed to send email to ${email}:`, error);
       return false;
