@@ -465,9 +465,9 @@ chore: 构建过程或辅助工具的变动
 
 ## 📞 联系我们
 
-- 项目主页：[GitHub Repository]
-- 问题反馈：[GitHub Issues]
-- 邮箱：[z1801273437@163.com]
+- 项目主页：[GitHub Repository](https://github.com/yourusername/email-backend)
+- 问题反馈：[GitHub Issues](https://github.com/yourusername/email-backend/issues)
+- 邮箱：[z1801273437@163.com](mailto:z1801273437@163.com)
 
 ---
 
