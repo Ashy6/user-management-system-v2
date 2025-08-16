@@ -11,8 +11,18 @@ function validateEmail(email) {
 }
 
 function corsHeaders(origin) {
+  // 允许的前端域名
+  const allowedOrigins = [
+    'https://911f777b.email-frontend-6z1.pages.dev',
+    'https://email-frontend-6z1.pages.dev',
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ];
+  
+  const allowedOrigin = allowedOrigins.includes(origin) ? origin : null;
+  
   return {
-    'Access-Control-Allow-Origin': origin || '*',
+    'Access-Control-Allow-Origin': allowedOrigin || 'https://911f777b.email-frontend-6z1.pages.dev',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Credentials': 'true',

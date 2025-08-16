@@ -9,12 +9,12 @@
 
 # 环境变量配置
 [env.production.vars]
-  VITE_API_URL = "https://email-backend-worker.your-subdomain.workers.dev"
+  VITE_API_URL = "https://email-backend-worker.zengjx1998.workers.dev/api"
   VITE_APP_NAME = "User Management System"
   VITE_APP_VERSION = "1.0.0"
 
 [env.preview.vars]
-  VITE_API_URL = "https://email-backend-worker.your-subdomain.workers.dev"
+  VITE_API_URL = "https://email-backend-worker.zengjx1998.workers.dev/api"
   VITE_APP_NAME = "User Management System (Preview)"
   VITE_APP_VERSION = "1.0.0-preview"
 
