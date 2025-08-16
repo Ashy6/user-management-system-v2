@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: email-backend-postgres
+    environment:
+      POSTGRES_DB: user_management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ashy1998
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - email-backend-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: email-backend-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - email-backend-network
+    restart: unless-stopped
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: email-backend-api
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=ashy1998
+      - DB_DATABASE=user_management
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+      - JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production
+      - SMTP_HOST=smtp.qq.com
+      - SMTP_PORT=587
+      - SMTP_USER=1801273437@qq.com
+      - SMTP_PASS=unpviszocymheeaa
+      - SMTP_FROM=1801273437@qq.com
+      - PORT=3000
+      - API_PREFIX=api
+      - CORS_ORIGIN=http://localhost:3001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - email-backend-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: email-backend-frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    networks:
+      - email-backend-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  email-backend-network:
+    driver: bridge
