@@ -15,8 +15,9 @@ async function bootstrap() {
   app.use(helmet());
 
   // CORS配置
+  const corsOrigin = configService.get('CORS_ORIGIN', 'http://localhost:3000');
   app.enableCors({
-    origin: configService.get('CORS_ORIGIN', 'http://localhost:3000'),
+    origin: corsOrigin.includes(',') ? corsOrigin.split(',').map(origin => origin.trim()) : corsOrigin,
     credentials: true,
   });
 
