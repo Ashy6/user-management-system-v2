@@ -31,6 +31,7 @@ Authorization: Bearer <access_token>  # 需要认证的接口
 ### 通用响应格式
 
 成功响应：
+
 ```json
 {
   "data": {},
@@ -40,6 +41,7 @@ Authorization: Bearer <access_token>  # 需要认证的接口
 ```
 
 错误响应：
+
 ```json
 {
   "statusCode": 400,
@@ -56,6 +58,7 @@ Authorization: Bearer <access_token>  # 需要认证的接口
 发送邮箱验证码用于登录或注册。
 
 **请求**
+
 ```http
 POST /api/auth/send-code
 Content-Type: application/json
@@ -67,12 +70,14 @@ Content-Type: application/json
 ```
 
 **请求参数**
-| 参数 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| email | string | 是 | 邮箱地址 |
-| type | string | 是 | 验证码类型：`login`(登录) 或 `register`(注册) |
+
+| 参数  | 类型   | 必填 | 描述                                          |
+| ----- | ------ | ---- | --------------------------------------------- |
+| email | string | 是   | 邮箱地址                                      |
+| type  | string | 是   | 验证码类型：`login`(登录) 或 `register`(注册) |
 
 **响应示例**
+
 ```json
 {
   "message": "验证码已发送到您的邮箱",
@@ -81,6 +86,7 @@ Content-Type: application/json
 ```
 
 **cURL 示例**
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/send-code \
   -H "Content-Type: application/json" \
@@ -95,6 +101,7 @@ curl -X POST http://localhost:3000/api/auth/send-code \
 使用邮箱和验证码进行登录。
 
 **请求**
+
 ```http
 POST /api/auth/login
 Content-Type: application/json
@@ -106,12 +113,14 @@ Content-Type: application/json
 ```
 
 **请求参数**
-| 参数 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| email | string | 是 | 邮箱地址 |
-| code | string | 是 | 6位验证码 |
+
+| 参数  | 类型   | 必填 | 描述      |
+| ----- | ------ | ---- | --------- |
+| email | string | 是   | 邮箱地址  |
+| code  | string | 是   | 6位验证码 |
 
 **响应示例**
+
 ```json
 {
   "user": {
@@ -133,6 +142,7 @@ Content-Type: application/json
 ```
 
 **cURL 示例**
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -147,6 +157,7 @@ curl -X POST http://localhost:3000/api/auth/login \
 使用邮箱验证码注册新用户。
 
 **请求**
+
 ```http
 POST /api/auth/register
 Content-Type: application/json
@@ -160,14 +171,16 @@ Content-Type: application/json
 ```
 
 **请求参数**
-| 参数 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| email | string | 是 | 邮箱地址 |
-| code | string | 是 | 6位验证码 |
-| name | string | 是 | 用户姓名（1-50字符） |
-| phone | string | 否 | 手机号码 |
+
+| 参数  | 类型   | 必填 | 描述                 |
+| ----- | ------ | ---- | -------------------- |
+| email | string | 是   | 邮箱地址             |
+| code  | string | 是   | 6位验证码            |
+| name  | string | 是   | 用户姓名（1-50字符） |
+| phone | string | 否   | 手机号码             |
 
 **响应示例**
+
 ```json
 {
   "user": {
@@ -193,6 +206,7 @@ Content-Type: application/json
 使用刷新令牌获取新的访问令牌。
 
 **请求**
+
 ```http
 POST /api/auth/refresh
 Content-Type: application/json
@@ -203,6 +217,7 @@ Content-Type: application/json
 ```
 
 **响应示例**
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -215,12 +230,14 @@ Content-Type: application/json
 获取当前登录用户的详细信息。
 
 **请求**
+
 ```http
 GET /api/auth/profile
 Authorization: Bearer <access_token>
 ```
 
 **响应示例**
+
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -247,6 +264,7 @@ Authorization: Bearer <access_token>
 退出登录并使刷新令牌失效。
 
 **请求**
+
 ```http
 POST /api/auth/logout
 Authorization: Bearer <access_token>
@@ -258,6 +276,7 @@ Content-Type: application/json
 ```
 
 **响应示例**
+
 ```json
 {
   "message": "退出登录成功"
@@ -271,21 +290,24 @@ Content-Type: application/json
 获取系统中的用户列表，支持分页和筛选。
 
 **请求**
+
 ```http
 GET /api/users?page=1&limit=10&search=张&status=active&roleId=role-id-123
 Authorization: Bearer <access_token>
 ```
 
 **查询参数**
-| 参数 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| page | number | 否 | 页码，默认1 |
-| limit | number | 否 | 每页数量，默认10 |
-| search | string | 否 | 搜索关键词（姓名、邮箱） |
-| status | string | 否 | 用户状态：`active`、`inactive`、`suspended` |
-| roleId | string | 否 | 角色ID |
+
+| 参数   | 类型   | 必填 | 描述                                        |
+| ------ | ------ | ---- | ------------------------------------------- |
+| page   | number | 否   | 页码，默认1                                 |
+| limit  | number | 否   | 每页数量，默认10                            |
+| search | string | 否   | 搜索关键词（姓名、邮箱）                    |
+| status | string | 否   | 用户状态：`active`、`inactive`、`suspended` |
+| roleId | string | 否   | 角色ID                                      |
 
 **响应示例**
+
 ```json
 {
   "users": [
@@ -315,12 +337,14 @@ Authorization: Bearer <access_token>
 根据用户ID获取用户详细信息。
 
 **请求**
+
 ```http
 GET /api/users/550e8400-e29b-41d4-a716-446655440000
 Authorization: Bearer <access_token>
 ```
 
 **响应示例**
+
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -348,6 +372,7 @@ Authorization: Bearer <access_token>
 创建新用户（管理员功能）。
 
 **请求**
+
 ```http
 POST /api/users
 Authorization: Bearer <access_token>
@@ -363,15 +388,17 @@ Content-Type: application/json
 ```
 
 **请求参数**
-| 参数 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| email | string | 是 | 邮箱地址 |
-| name | string | 是 | 用户姓名 |
-| phone | string | 否 | 手机号码 |
-| roleId | string | 否 | 角色ID |
-| status | string | 否 | 用户状态，默认`active` |
+
+| 参数   | 类型   | 必填 | 描述                   |
+| ------ | ------ | ---- | ---------------------- |
+| email  | string | 是   | 邮箱地址               |
+| name   | string | 是   | 用户姓名               |
+| phone  | string | 否   | 手机号码               |
+| roleId | string | 否   | 角色ID                 |
+| status | string | 否   | 用户状态，默认`active` |
 
 **响应示例**
+
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440002",
@@ -396,6 +423,7 @@ Content-Type: application/json
 更新用户的基本信息。
 
 **请求**
+
 ```http
 PATCH /api/users/550e8400-e29b-41d4-a716-446655440000
 Authorization: Bearer <access_token>
@@ -410,19 +438,21 @@ Content-Type: application/json
 ```
 
 **请求参数**
-| 参数 | 类型 | 必填 | 描述 |
-|------|------|------|------|
-| name | string | 否 | 用户姓名 |
-| phone | string | 否 | 手机号码 |
-| avatarUrl | string | 否 | 头像URL |
-| roleId | string | 否 | 角色ID |
-| status | string | 否 | 用户状态 |
+
+| 参数      | 类型   | 必填 | 描述     |
+| --------- | ------ | ---- | -------- |
+| name      | string | 否   | 用户姓名 |
+| phone     | string | 否   | 手机号码 |
+| avatarUrl | string | 否   | 头像URL  |
+| roleId    | string | 否   | 角色ID   |
+| status    | string | 否   | 用户状态 |
 
 ### 5. 更新用户状态
 
 单独更新用户的状态。
 
 **请求**
+
 ```http
 PATCH /api/users/550e8400-e29b-41d4-a716-446655440000/status
 Authorization: Bearer <access_token>
@@ -438,12 +468,14 @@ Content-Type: application/json
 获取用户相关的统计数据。
 
 **请求**
+
 ```http
 GET /api/users/statistics
 Authorization: Bearer <access_token>
 ```
 
 **响应示例**
+
 ```json
 {
   "totalUsers": 150,
@@ -465,12 +497,14 @@ Authorization: Bearer <access_token>
 获取系统中的所有角色。
 
 **请求**
+
 ```http
 GET /api/roles
 Authorization: Bearer <access_token>
 ```
 
 **响应示例**
+
 ```json
 [
   {
@@ -505,6 +539,7 @@ Authorization: Bearer <access_token>
 获取状态为活跃的角色列表。
 
 **请求**
+
 ```http
 GET /api/roles/active
 Authorization: Bearer <access_token>
@@ -515,12 +550,14 @@ Authorization: Bearer <access_token>
 获取系统中所有可用的权限。
 
 **请求**
+
 ```http
 GET /api/roles/permissions
 Authorization: Bearer <access_token>
 ```
 
 **响应示例**
+
 ```json
 {
   "users": ["read", "create", "update", "delete"],
@@ -534,6 +571,7 @@ Authorization: Bearer <access_token>
 创建新的角色。
 
 **请求**
+
 ```http
 POST /api/roles
 Authorization: Bearer <access_token>
@@ -553,6 +591,7 @@ Content-Type: application/json
 更新角色的权限配置。
 
 **请求**
+
 ```http
 PATCH /api/roles/role-id-123/permissions
 Authorization: Bearer <access_token>
@@ -573,12 +612,14 @@ Content-Type: application/json
 获取当前的系统配置。
 
 **请求**
+
 ```http
 GET /api/settings
 Authorization: Bearer <access_token>
 ```
 
 **响应示例**
+
 ```json
 {
   "emailConfig": {
@@ -612,6 +653,7 @@ Authorization: Bearer <access_token>
 更新系统配置（部分更新）。
 
 **请求**
+
 ```http
 PUT /api/settings
 Authorization: Bearer <access_token>
@@ -635,20 +677,21 @@ Content-Type: application/json
 
 ### 常见错误码
 
-| 状态码 | 错误类型 | 描述 |
-|--------|----------|------|
-| 400 | Bad Request | 请求参数错误 |
-| 401 | Unauthorized | 未授权访问 |
-| 403 | Forbidden | 权限不足 |
-| 404 | Not Found | 资源不存在 |
-| 409 | Conflict | 资源冲突（如邮箱已存在） |
-| 422 | Unprocessable Entity | 数据验证失败 |
-| 429 | Too Many Requests | 请求频率限制 |
-| 500 | Internal Server Error | 服务器内部错误 |
+| 状态码 | 错误类型              | 描述                     |
+| ------ | --------------------- | ------------------------ |
+| 400    | Bad Request           | 请求参数错误             |
+| 401    | Unauthorized          | 未授权访问               |
+| 403    | Forbidden             | 权限不足                 |
+| 404    | Not Found             | 资源不存在               |
+| 409    | Conflict              | 资源冲突（如邮箱已存在） |
+| 422    | Unprocessable Entity  | 数据验证失败             |
+| 429    | Too Many Requests     | 请求频率限制             |
+| 500    | Internal Server Error | 服务器内部错误           |
 
 ### 错误响应示例
 
 **验证错误**
+
 ```json
 {
   "statusCode": 400,
@@ -662,6 +705,7 @@ Content-Type: application/json
 ```
 
 **权限不足**
+
 ```json
 {
   "statusCode": 403,
@@ -672,6 +716,7 @@ Content-Type: application/json
 ```
 
 **资源不存在**
+
 ```json
 {
   "statusCode": 404,
@@ -682,6 +727,7 @@ Content-Type: application/json
 ```
 
 **频率限制**
+
 ```json
 {
   "statusCode": 429,
@@ -716,6 +762,7 @@ Content-Type: application/json
 - API端点根据所需权限进行访问控制
 
 权限格式：`{resource}:{action}`
+
 - resource：资源类型（如 users、roles、settings）
 - action：操作类型（如 read、create、update、delete）
 
@@ -732,9 +779,10 @@ Content-Type: application/json
 ## 📞 技术支持
 
 如有问题，请联系：
+
 - 技术文档：查看项目README.md
 - 问题反馈：GitHub Issues
-- API文档：http://localhost:3000/api（Swagger UI）
+- API文档：<http://localhost:3000/api（Swagger> UI）
 
 ---
 

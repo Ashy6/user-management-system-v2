@@ -155,9 +155,9 @@ npm run dev:frontend # 前端服务 (http://localhost:5173)
 
 ### 6. 访问应用
 
-- 前端应用：http://localhost:5173
-- API文档：http://localhost:3000/api
-- 后端API：http://localhost:3000/api/*
+- 前端应用：<http://localhost:5173>
+- API文档：<http://localhost:3000/api>
+- 后端API：<http://localhost:3000/api/>*
 
 ## 📖 使用指南
 
@@ -416,9 +416,9 @@ chore: 构建过程或辅助工具的变动
 
 启动后端服务后，访问以下地址查看API文档：
 
-- **Swagger UI**: http://localhost:3000/api
-- **JSON格式**: http://localhost:3000/api-json
-- **YAML格式**: http://localhost:3000/api-yaml
+- **Swagger UI**: <http://localhost:3000/api>
+- **JSON格式**: <http://localhost:3000/api-json>
+- **YAML格式**: <http://localhost:3000/api-yaml>
 
 ### 主要API端点
 
@@ -467,7 +467,7 @@ chore: 构建过程或辅助工具的变动
 
 - 项目主页：[GitHub Repository]
 - 问题反馈：[GitHub Issues]
-- 邮箱：[your-email@example.com]
+- 邮箱：[z1801273437@163.com]
 
 ---
 
