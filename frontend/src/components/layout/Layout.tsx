@@ -12,7 +12,6 @@ import {
   User,
   Shield,
 } from 'lucide-react';
-import { toast } from 'sonner';
 
 const Layout: React.FC = () => {
   const location = useLocation();
@@ -50,9 +49,9 @@ const Layout: React.FC = () => {
 
       {/* 侧边栏 */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        style={{ height: '100vh', float: 'left' }}
       >
         <div className="flex items-center justify-between h-16 px-6 border-b">
           <h1 className="text-xl font-bold text-gray-900">用户管理系统</h1>
@@ -73,17 +72,15 @@ const Layout: React.FC = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
+                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${isActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <Icon
-                    className={`mr-3 h-5 w-5 ${
-                      isActive ? 'text-primary-foreground' : 'text-gray-400 group-hover:text-gray-500'
-                    }`}
+                    className={`mr-3 h-5 w-5 ${isActive ? 'text-primary-foreground' : 'text-gray-400 group-hover:text-gray-500'
+                      }`}
                   />
                   {item.name}
                 </Link>
